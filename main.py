@@ -19,6 +19,15 @@ def main():
         model="gemini-2.5-flash",
         contents="Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
     )
+
+    # check for token metadata
+    if response.usage_metadata == None:
+        raise RuntimeError("No token metadata found.")
+
+    # print token metadata and response
+    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+    print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+    print("Response:")
     print(response.text)
 
 
