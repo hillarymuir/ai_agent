@@ -12,8 +12,15 @@ def main():
         raise RuntimeError("No API key found.")
     
     # create Gemini client
+    client = genai.Client(api_key=api_key)
 
-    print("Hello from ai-agent!")
+    # hardcoded test prompt
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents="Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
+    )
+    print(response.text)
+
 
 
 if __name__ == "__main__":
