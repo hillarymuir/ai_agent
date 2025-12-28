@@ -2,6 +2,7 @@
 import os, argparse
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
 def main():
     # get api key
@@ -19,10 +20,15 @@ def main():
     parser.add_argument("user_prompt", type=str, help="User prompt")
     args = parser.parse_args()
 
+    # remember user prompt
+    messages = [types.Content(
+        role="user", parts=[types.Part(text=args.user_prompt)]
+        )]
+
     # ask ai
     response = client.models.generate_content(
         model="gemini-2.5-flash",
-        contents=args.user_prompt
+        contents=messages
     )
 
     # check for token metadata
