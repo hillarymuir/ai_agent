@@ -1,5 +1,5 @@
 # imports
-import os
+import os, argparse
 from dotenv import load_dotenv
 from google import genai
 
@@ -14,10 +14,15 @@ def main():
     # create Gemini client
     client = genai.Client(api_key=api_key)
 
-    # hardcoded test prompt
+    # parse user prompt
+    parser = argparse.ArgumentParser(description="Chatbot")
+    parser.add_argument("user_prompt", type=str, help="User prompt")
+    args = parser.parse_args()
+
+    # ask ai
     response = client.models.generate_content(
         model="gemini-2.5-flash",
-        contents="Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
+        contents=args.user_prompt
     )
 
     # check for token metadata
