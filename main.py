@@ -1,10 +1,13 @@
 # main.py
 
 # imports
-import os, argparse
+import os
+import argparse
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from functions.get_files_info import get_files_info #to implement in main
+from functions.get_file_content import get_file_content #to implement in main
 
 def main():
     # get api key
