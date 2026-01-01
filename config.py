@@ -1,0 +1,4 @@
+# config.py
+
+# max no. of characters to read from a file
+MAX_CHARS = 10000

@@ -21,16 +21,3 @@ def get_files_info(working_directory, directory="."):
         dir_contents_list.append(item_str)
     
     return "\n".join(dir_contents_list)
-
-
-
-
-
-
-
-
-
-
-
-
-("\n")
