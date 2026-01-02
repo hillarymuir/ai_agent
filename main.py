@@ -6,7 +6,7 @@ import argparse
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from prompts import system_prompt
+from prompts import SYSTEM_PROMPT
 from available_fns import available_functions
 
 def main():
@@ -37,7 +37,7 @@ def main():
         contents=messages,
         config=types.GenerateContentConfig(
             tools=[available_functions],
-            system_instruction=system_prompt
+            system_instruction=SYSTEM_PROMPT
             )
     )
 

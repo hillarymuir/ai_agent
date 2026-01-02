@@ -24,10 +24,26 @@ def get_file_content(working_directory, file_path):
     with open(target_file, "r") as f:
         file_content_str = f.read(MAX_CHARS)
         if f.read(1):
-            file_content_str += f"\[...File \"{file_path}\" truncated at {MAX_CHARS} characters]"
+            file_content_str += f"[...File \"{file_path}\" truncated at {MAX_CHARS} characters]"
 
     # return file contents as a string
     return file_content_str
 
     # TODO: implement try/catch exception handling
 
+schema_get_file_content = types.FunctionDeclaration(
+    name="get_file_content",
+    description="""
+    Read contents of a file located at a particular file path in the working directory
+    """,
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        required=["file_path"],
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Path to file to be read, relative to the working directory",
+            ),
+        },
+    ),
+)

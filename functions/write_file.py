@@ -1,6 +1,7 @@
 # functions/write_file.py
 
 import os
+from google.genai import types
 
 def write_file(working_directory, file_path, content):
     # get full path of target file
@@ -25,3 +26,24 @@ def write_file(working_directory, file_path, content):
     return f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
 
     # TODO: implement try/catch exception handling
+
+schema_write_file = types.FunctionDeclaration(
+    name="write_file",
+    description="""
+    Write or overwrite a file located at a particular file path in the working directory
+    """,
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        required=["file_path", "content"],
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Path to file to be written to, relative to the working directory",
+            ),
+            "content": types.Schema(
+                type=types.Type.STRING,
+                description="Text to be written to file",
+            ),
+        },
+    ),
+)
