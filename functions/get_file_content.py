@@ -1,6 +1,7 @@
 # functions/get_file_content.py
 
 import os
+from google.genai import types
 
 # get config
 import sys
@@ -29,3 +30,4 @@ def get_file_content(working_directory, file_path):
     return file_content_str
 
     # TODO: implement try/catch exception handling
+

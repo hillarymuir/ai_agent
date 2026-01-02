@@ -6,11 +6,8 @@ import argparse
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from functions.get_files_info import get_files_info
-from functions.get_file_content import get_file_content
-from functions.write_file import write_file
-from functions.run_python_file import run_python_file
 from prompts import system_prompt
+from available_fns import available_functions
 
 def main():
     # get api key
@@ -38,21 +35,28 @@ def main():
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=messages,
-        config=types.GenerateContentConfig(system_instruction=system_prompt)
+        config=types.GenerateContentConfig(
+            tools=[available_functions],
+            system_instruction=system_prompt
+            )
     )
 
     # check for token metadata
     if response.usage_metadata == None:
         raise RuntimeError("No token metadata found.")
 
-    # printout
+    # printout of verbose info and either function calls if any or response if no fn calls
     if args.verbose:
         print(f"User prompt: {args.user_prompt}")
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-    print("Response:")
-    print(response.text)
-
+    if response.function_calls:
+        print("Function calls:")
+        for call in response.function_calls:
+            print(f"{call.name}({call.args})")
+    else: 
+        print("Response:")
+        print(response.text)
 
 
 if __name__ == "__main__":
