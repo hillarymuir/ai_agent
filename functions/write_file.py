@@ -23,3 +23,5 @@ def write_file(working_directory, file_path, content):
 
     # return success string
     return f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
+
+    # TODO: implement try/catch exception handling
