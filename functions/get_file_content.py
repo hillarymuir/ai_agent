@@ -27,3 +27,5 @@ def get_file_content(working_directory, file_path):
 
     # return file contents as a string
     return file_content_str
+
+    # TODO: implement try/catch exception handling
