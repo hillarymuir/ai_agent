@@ -6,8 +6,11 @@ import argparse
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from functions.get_files_info import get_files_info #to implement in main
-from functions.get_file_content import get_file_content #to implement in main
+from functions.get_files_info import get_files_info
+from functions.get_file_content import get_file_content
+from functions.write_file import write_file
+from functions.run_python_file import run_python_file
+from prompts import system_prompt
 
 def main():
     # get api key
@@ -34,7 +37,8 @@ def main():
     # ask ai
     response = client.models.generate_content(
         model="gemini-2.5-flash",
-        contents=messages
+        contents=messages,
+        config=types.GenerateContentConfig(system_instruction=system_prompt)
     )
 
     # check for token metadata
