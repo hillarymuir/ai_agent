@@ -8,6 +8,7 @@ from google import genai
 from google.genai import types
 from prompts import SYSTEM_PROMPT
 from available_fns import available_functions
+from call_function import call_function
 
 def main():
     # get api key
@@ -45,16 +46,28 @@ def main():
     if response.usage_metadata == None:
         raise RuntimeError("No token metadata found.")
 
-    # printout of verbose info and either function calls if any or response if no fn calls
+    # printout of verbose info
     if args.verbose:
         print(f"User prompt: {args.user_prompt}")
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+
+    # make and handle function calls
     if response.function_calls:
         print("Function calls:")
+        function_results = []
         for call in response.function_calls:
-            print(f"{call.name}({call.args})")
-    else: 
+            function_call_result = call_function(call, call.args)
+            if not function_call_result.parts:
+                raise Exception("Error: Function .parts list is None.")
+            if not function_call_result.parts[0].function_response.response:
+                raise Exception("Error: Function result is None.")
+            function_results.append(function_call_result)
+            if args.verbose:
+                print(f"-> {function_call_result.parts[0].function_response.response}")
+    
+    # print response if no function calls
+    else:
         print("Response:")
         print(response.text)
 
