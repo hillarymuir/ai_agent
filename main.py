@@ -6,11 +6,9 @@ import argparse
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from functions.get_files_info import get_files_info
-from functions.get_file_content import get_file_content
-from functions.write_file import write_file
-from functions.run_python_file import run_python_file
-from prompts import system_prompt
+from prompts import SYSTEM_PROMPT
+from available_fns import available_functions
+from call_function import call_function
 
 def main():
     # get api key
@@ -38,21 +36,40 @@ def main():
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=messages,
-        config=types.GenerateContentConfig(system_instruction=system_prompt)
+        config=types.GenerateContentConfig(
+            tools=[available_functions],
+            system_instruction=SYSTEM_PROMPT
+            )
     )
 
     # check for token metadata
     if response.usage_metadata == None:
         raise RuntimeError("No token metadata found.")
 
-    # printout
+    # printout of verbose info
     if args.verbose:
         print(f"User prompt: {args.user_prompt}")
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-    print("Response:")
-    print(response.text)
 
+    # make and handle function calls
+    if response.function_calls:
+        print("Function calls:")
+        function_results = []
+        for call in response.function_calls:
+            function_call_result = call_function(call, call.args)
+            if not function_call_result.parts:
+                raise Exception("Error: Function .parts list is None.")
+            if not function_call_result.parts[0].function_response.response:
+                raise Exception("Error: Function result is None.")
+            function_results.append(function_call_result)
+            if args.verbose:
+                print(f"-> {function_call_result.parts[0].function_response.response}")
+    
+    # print response if no function calls
+    else:
+        print("Response:")
+        print(response.text)
 
 
 if __name__ == "__main__":

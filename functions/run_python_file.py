@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+from google.genai import types
 
 def run_python_file(working_directory, file_path, args=None):
     try:
@@ -33,11 +34,11 @@ def run_python_file(working_directory, file_path, args=None):
         print(completed_process) #debug
 
         # build and return output string based on completed_process object
-        output_str = f"Process results:"
+        output_str = "Process results:"
         if completed_process.returncode != 0:
             output_str += f"\nProcess exited with code {completed_process.returncode}"
         if not completed_process.stdout and not completed_process.stderr:
-            output_str += f"\nNo output produced"
+            output_str += "\nNo output produced"
         else:
             if completed_process.stdout:
                 output_str += f"\nSTDOUT: {completed_process.stdout}"
@@ -48,3 +49,29 @@ def run_python_file(working_directory, file_path, args=None):
     # TODO: more specific exception handling
     except Exception as e:
         return f"Error executing Python file: {e}"
+    
+schema_run_python_file = types.FunctionDeclaration(
+    name="run_python_file",
+    description="""
+    Runs a python file located at the file path relative to the given working directory
+    """,
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        required=["file_path"],
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Path to file to be run, relative to the working directory",
+            ),
+            "args": types.Schema(
+                type=types.Type.ARRAY,
+                description="Optional keyword argument for an array of additional arguments for input into the python file being run",
+                items=types.Schema(
+                    type = types.Type.STRING,
+                    description="a single argument to pass to the Python file"
+                )
+                
+            ),
+        },
+    ),
+)
